@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - JavaScript Introspection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script>
+    var __options = {"flags":{"complexity":{"logicalor":true,"switchcase":true,"forin":false,"trycatch":false,"newmi":true},"jshint":{"options":{},"globals":{}}}}
+  </script>
+
+  <link href="assets/css/vendor/bootstrap-3.0.0-wip.css" rel="stylesheet">
+  <link href="assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="assets/css/plato.css" rel="stylesheet">
+  <link href="assets/css/plato-overview.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav">
+      <li class="active">
+        <a href="index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>JavaScript Source Analysis</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <h1 class="span12">Summary</h1>
+  </div>
+  <div class="row">
+    <div class="span6">
+      <h2 class="header">Total/Average Lines <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code" data-original-title="SLOC"></i></h2>
+      <p class="stat">4967 / 275</p>
+    </div>
+    <div class="span6">
+      <h2 class="header">Average Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">65.54</p>
+    </div>
+  </div>
+</div>
+<div class="container historical">
+  <div class="row">
+    <div class="span6">
+      <div id="chart_historical_sloc" class="chart js-chart"></div>
+    </div>
+    <div class="span6">
+      <div id="chart_historical_maint" class="chart js-chart"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container overview">
+  <div class="row">
+    <h2 class="span12">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+    <div class="span12"><div id='chart_maintainability' class='chart js-chart'></div></div>
+  </div>
+  <div class="row">
+    <h2 class="span12">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code" data-original-title="SLOC"></i></h2>
+    <div class="span12"><div id='chart_sloc' class='chart js-chart'></div></div>
+  </div>
+  <div class="row">
+    <h2 class="span12">Estimated errors in implementation <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+    <div class="span12"><div id='chart_bugs' class='chart js-chart'></div></div>
+  </div>
+  
+  <div class="row">
+    <h2 class="span12">Lint errors</h2>
+    <div class="span12"><div id='chart_lint' class='chart js-chart'></div></div>
+  </div>
+  
+</div>
+
+<div class="container">
+  <div class="row">
+    <h1 class="span12">Files</h1>
+  </div>
+  <div class="row">
+    <ul class="file-list list-unstyled">
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_config_manager_js/index.html">workspace/gaia/apps/costcontrol/js/config_manager.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="3"
+              data-sloc="293"
+              data-bugs="1.95"
+              data-complexity="31"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_views_telephony_js/index.html">workspace/gaia/apps/costcontrol/js/views/telephony.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="0"
+              data-sloc="108"
+              data-bugs="0.77"
+              data-complexity="6"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_views_balance_js/index.html">workspace/gaia/apps/costcontrol/js/views/balance.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="6"
+              data-sloc="418"
+              data-bugs="3.42"
+              data-complexity="37"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_views_datausage_js/index.html">workspace/gaia/apps/costcontrol/js/views/datausage.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="5"
+              data-sloc="706"
+              data-bugs="9.04"
+              data-complexity="45"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_fte_js/index.html">workspace/gaia/apps/costcontrol/js/fte.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="1"
+              data-sloc="254"
+              data-bugs="2.35"
+              data-complexity="16"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_mindgap_js/index.html">workspace/gaia/apps/costcontrol/js/mindgap.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="1"
+              data-sloc="175"
+              data-bugs="1.45"
+              data-complexity="23"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_app_js/index.html">workspace/gaia/apps/costcontrol/js/app.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="0"
+              data-sloc="294"
+              data-bugs="2.10"
+              data-complexity="33"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_common_js/index.html">workspace/gaia/apps/costcontrol/js/common.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="41"
+              data-sloc="251"
+              data-bugs="2.31"
+              data-complexity="28"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_message_handler_js/index.html">workspace/gaia/apps/costcontrol/js/message_handler.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="12"
+              data-sloc="495"
+              data-bugs="4.34"
+              data-complexity="43"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_settings_limitdialog_js/index.html">workspace/gaia/apps/costcontrol/js/settings/limitdialog.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="5"
+              data-sloc="109"
+              data-bugs="0.78"
+              data-complexity="8"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_settings_autosettings_js/index.html">workspace/gaia/apps/costcontrol/js/settings/autosettings.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="7"
+              data-sloc="277"
+              data-bugs="1.94"
+              data-complexity="29"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_settings_settings_js/index.html">workspace/gaia/apps/costcontrol/js/settings/settings.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="0"
+              data-sloc="298"
+              data-bugs="2.63"
+              data-complexity="11"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_utils_formatting_js/index.html">workspace/gaia/apps/costcontrol/js/utils/formatting.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="9"
+              data-sloc="125"
+              data-bugs="0.94"
+              data-complexity="20"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_utils_toolkit_js/index.html">workspace/gaia/apps/costcontrol/js/utils/toolkit.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="4"
+              data-sloc="61"
+              data-bugs="0.40"
+              data-complexity="11"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_utils_debug_js/index.html">workspace/gaia/apps/costcontrol/js/utils/debug.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="0"
+              data-sloc="35"
+              data-bugs="0.33"
+              data-complexity="7"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_costcontrol_js/index.html">workspace/gaia/apps/costcontrol/js/costcontrol.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="5"
+              data-sloc="484"
+              data-bugs="3.58"
+              data-complexity="50"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_widget_js/index.html">workspace/gaia/apps/costcontrol/js/widget.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="3"
+              data-sloc="403"
+              data-bugs="3.89"
+              data-complexity="29"
+          ></span>
+      </li>
+      
+      <li class="span12">
+        <span class="fade-left fadeout visible-desktop"></span>
+        <span class="span4 file"><a class="file-link" href="./files/workspace_gaia_apps_costcontrol_js_view_manager_js/index.html">workspace/gaia/apps/costcontrol/js/view_manager.js</a></span>
+        <span class="span8 file-chart js-file-chart"
+              data-lint="19"
+              data-sloc="181"
+              data-bugs="1.43"
+              data-complexity="22"
+          ></span>
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/javascript" src="assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="assets/scripts/plato-overview.js"></script>
+</body>
+</html>

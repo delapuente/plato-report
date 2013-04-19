@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap-3.0.0-wip.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>workspace/gaia/apps/costcontrol/js/settings/autosettings.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="span6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">71.30</p>
+    </div>
+    <div class="span6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">277</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="span6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="span6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">29.71</p>
+    </div>
+    <div class="span6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">1.94</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="span6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="span6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="span12">/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
+/* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
+
+'use strict';
+
+var AutoSettings = (function() {
+
+  var OPTION_CONFIGURERS = {
+    'select': function _selectConfigurer(guiWidget) {
+      var optionName = guiWidget.dataset.option;
+      var text, parent = guiWidget.parentElement;
+      if (parent.classList.contains('fake-select')) {
+        text = document.createTextNode('');
+        parent.insertBefore(text, parent.firstChild);
+      }
+      guiWidget.addEventListener('change', function _onSelectChange() {
+        debug('Value:', guiWidget.value);
+        settings.option(optionName, guiWidget.value);
+      });
+      settings.observe(optionName, function _onOptionChange(value) {
+        if (value === undefined) {
+          value = settings.defaultValue(optionName);
+        }
+        guiWidget.value = value;
+        if (text) {
+          var selected = guiWidget.options[guiWidget.selectedIndex];
+          text.data = selected.textContent;
+        }
+      });
+    },
+    // Select is used to simulate custom combo boxes. It displays a selection
+    // dialog with an ok button and possibly a cancel button. The value is only
+    // changed if ok button is pressed. If cancel provided and clicked then
+    // the former value is restored.
+    'customselect': function _customselectConfigurer(guiWidget) {
+
+      var dialog = document.getElementById(guiWidget.dataset.selectdialog);
+      var optionName = guiWidget.dataset.option;
+
+      // Dialog
+
+      var okButton = dialog.querySelector('button.recommend');
+      if (okButton) {
+        okButton.addEventListener('click', function _onDialogOk() {
+          var checked = dialog.querySelector('input[type="radio"]:checked');
+          settings.option(optionName, checked.value);
+          vmanager.closeCurrentView();
+        });
+      }
+
+      var cancelButton = dialog.querySelector('button.cancel');
+      if (cancelButton) {
+        cancelButton.addEventListener('click',
+          function _onDialogCancel() {
+            var currentValue = settings.option(optionName);
+            settings.option(optionName, currentValue);
+            vmanager.closeCurrentView();
+          }
+        );
+      }
+
+      guiWidget.addEventListener('click', function _onWidgetClick() {
+        vmanager.changeViewTo(dialog.id);
+      });
+
+      // Keep the widget and the dialog synchronized
+      settings.observe(optionName,
+        function _onOptionChange(value) {
+
+          // Use default value if no value
+          if (value === null || value === undefined) {
+            value = getDefaultValue(optionName);
+          }
+
+          var radio =
+            dialog.querySelector('input[type="radio"][value="' + value + '"]');
+
+          if (!radio) {
+            value = getDefaultValue(optionName);
+            radio = dialog.querySelector('input[type="radio"][value="' +
+                                         value + '"]');
+          }
+          radio.checked = true;
+
+          var textSpan = dialog.querySelector('input:checked + span');
+          var tagSpan = guiWidget.querySelector('.tag');
+          tagSpan.textContent = textSpan.textContent;
+        }
+      );
+
+      // Keep the UI localized
+      window.addEventListener('localized', function _onLocalized() {
+        var textSpan = dialog.querySelector('input:checked + span');
+        var tagSpan = guiWidget.querySelector('.tag');
+        tagSpan.textContent = textSpan.textContent;
+      });
+
+    },
+
+    // Switch configurer handles an checkbox. When it changes, the checked
+    // state is used as the content for the option.
+    'switch' : function _switchConfigurer(guiWidget) {
+      var optionName = guiWidget.dataset.option;
+
+      // Add an observer to keep synchronization
+      settings.observe(
+        optionName,
+        function _onOptionChange(value) {
+          if (value === null || value === undefined) {
+            value = getDefaultValue(optionName);
+          }
+          guiWidget.checked = value;
+        }
+      );
+
+      // Add an event listener to switch the option
+      guiWidget.addEventListener('click', function ccapp_onSwitchChange() {
+        settings.option(optionName, guiWidget.checked);
+      });
+    },
+
+    // Input configurer handles an input box. When the content changes, the
+    // content is parsed and sent to the proper option.
+    'input' : function _inputConfigurer(guiWidget) {
+      var optionName = guiWidget.dataset.option;
+
+      // Add an observer to keep synchronization
+      settings.observe(
+        optionName,
+        function _onOptionChange(value) {
+          if (value === null || value === undefined) {
+            value = getDefaultValue(optionName);
+          }
+          guiWidget.value = value;
+        }
+      );
+
+      // Add an event listener to switch the option
+      guiWidget.addEventListener('change', function _onContentChange() {
+        var value = guiWidget.value;
+        if (guiWidget.type === 'number') {
+          value = parseFloat(value);
+        }
+        settings.option(optionName, value);
+      });
+    }
+  };
+
+  // Add a new type with its configuration function
+  function addType(newType, configFunction) {
+    OPTION_CONFIGURERS[newType] = configFunction;
+  }
+
+  var customRecognizer;
+  // Add a recognizer to detect new types
+  function setCustomRecognizer(recognizer) {
+    customRecognizer = recognizer;
+  }
+
+  // Return the <li> wrapping the option
+  function getEntryParent(item) {
+    while (item && item.tagName !== 'LI')
+      item = item.parentNode;
+    return item;
+  }
+
+  // Return the default value for an option
+  function getDefaultValue(optionName) {
+    return settings.defaultValue(optionName);
+  }
+
+  // Configure the web page
+  var settings, vmanager;
+  function initialize(settingsInterface, viewManager, root) {
+    var that = this;
+
+    root = root || 'body';
+    settings = settingsInterface;
+    vmanager = viewManager;
+
+    // Return the type of configurer needed based on the properties of
+    // the HTML element marked as the option.
+    function getWidgetType(widget) {
+      if (widget.dataset.widgetType) {
+        return widget.dataset.widgetType;
+      }
+
+      var customType;
+      if (customRecognizer === 'function') {
+        customType = customRecognizer(widget, settings, vmanager);
+      }
+
+      if (customType) {
+        return customType;
+      }
+
+      if (widget.tagName === 'SELECT') {
+        return 'select';
+      }
+
+      if (typeof widget.dataset.selectdialog !== 'undefined') {
+        return 'customselect';
+      }
+
+      if (widget.type === 'checkbox') {
+        return 'switch';
+      }
+
+      if (['text', 'number'].indexOf(widget.type) !== -1) {
+        return 'input';
+      }
+    }
+
+    // Install a dependency based on an expression. When expression is true
+    // call the callback.
+    function installDependency(expression, callback) {
+      var equality = false;
+      var parsed = expression.split('!=');
+      if (parsed.length === 1) {
+        parsed = expression.split('=');
+        equality = true;
+      }
+
+      var dependency = parsed[0];
+      var referenceValue = parsed[1];
+      settings.observe(dependency,
+        function ccapp_dependencyAction(value) {
+          var test = (('' + value) === referenceValue);
+          callback(equality === test); // or is an equality test and values are
+                                       // equal or is an inequality test and
+                                       // values are different.
+        }
+      );
+    }
+
+    // Widgets
+    var allGUIWidgets = document.querySelectorAll(root + ' .settings-option');
+    [].forEach.call(allGUIWidgets, function _forEachWidget(guiWidget) {
+
+      var type = getWidgetType(guiWidget);
+      var entry = getEntryParent(guiWidget);
+      var configurer = OPTION_CONFIGURERS[type];
+      if (configurer) {
+        configurer(guiWidget, settings, vmanager);
+      }
+
+      // Simple dependency resolution:
+
+      // enable / disable some options depending on the values of other
+      var disableOn = guiWidget.dataset.disableOn;
+      if (disableOn) {
+        installDependency(disableOn, function _disable(passed) {
+          guiWidget.disabled = passed;
+          if (entry) {
+            entry.setAttribute('aria-disabled', passed + '');
+          }
+        });
+      }
+
+      // hide / show some options depending on the values of other
+      var hideOn = guiWidget.dataset.hideOn;
+      if (hideOn) {
+        installDependency(hideOn, function _hide(passed) {
+          guiWidget.setAttribute('aria-hidden', passed + '');
+          if (entry) {
+            entry.setAttribute('aria-hidden', passed + '');
+          }
+        });
+      }
+
+    });
+  }
+
+  return {
+    initialize: initialize,
+    setCustomRecognizer: setCustomRecognizer,
+    addType: addType
+  };
+
+}());</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
